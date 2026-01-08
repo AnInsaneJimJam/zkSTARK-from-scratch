@@ -31,4 +31,10 @@ Computation -> Program(Generally consists of instructions that determine how a m
 
 Arithmetiation -> Turn compuation into equivalent equations on finite fields.
 
-Interpolation and IOPs -> Representation of the arithmetic constraint system in term of polynomials. IOPs will be explained later
+Interpolation and IOPs -> Representation of the arithmetic constraint system in term of polynomials.These polynomials can be used as IOPs(Interactive Oracle Proof) where verifier can get value at any point and be satisfied of computation.
+
+FRI(Fast Reed-Solomon IOP of Proximity) -> Polynomials Oracle don't exsist in real world. FRI let us commit polynomial and then open it up in a point of verifier's choosing.
+
+```
+
+The Reed-Solomon codeword associated with a polynomial f(x) is the list of values it takes on a given domain D 
