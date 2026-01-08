@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "zkSTARK-from-scratch"
+name = "stark"
 version = "0.1.0"
