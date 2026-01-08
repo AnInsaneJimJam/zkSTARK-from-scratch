@@ -8,35 +8,51 @@ fn main() {
     //         (old_r,r) = (r,old_r - quotient*r);
     //         (old_s,s) = (s,old_s - quotient*s);
     //         (old_t,t) = (r,old_t - quotient*t);
-    //     }   
-    //     return (old_s,old_t,old_r ) 
+    //     }
+    //     return (old_s,old_t,old_r )
 
     // }
 
-    struct FieldElement{
+    struct FieldElement {
         value: u32,
-        field: u32
+        field: u32,
     }
 
-    // Have to look that field should be same 
+    // Have to look that field should be same
+    // Have to look for the overflow
 
     impl FieldElement {
-        fn new(value: u32, field: u32) -> Self{
-            FieldElement { value: value%field, field }
-        }
-        
-        fn add(&self,other: &FieldElement) -> Self{
-            let sum = (self.value+other.value)%self.field;
-            let field = self.field;
-            FieldElement{value: sum,field}
+        fn new(value: u32, field: u32) -> Self {
+            FieldElement {
+                value: value % field,
+                field,
+            }
         }
 
-        fn mul(&self,other: &FieldElement) -> Self{
-            let product = (self.value+other.value)%self.field;
+        fn add(&self, other: &FieldElement) -> Self {
+            let sum = (self.value + other.value) % self.field;
             let field = self.field;
-            FieldElement{value: product,field}
+            FieldElement { value: sum, field }
         }
 
+        fn mul(&self, other: &FieldElement) -> Self {
+            let product = (self.value + other.value) % self.field;
+            let field = self.field;
+            FieldElement {
+                value: product,
+                field,
+            }
+        }
+
+        fn neg(&self) -> Self {
+            FieldElement {
+                value: (self.field - self.value),
+                field: (self.field),
+            }
+        }
+
+        fn sub(&self, other: &FieldElement) -> Self {
+            self.add(&other.neg())
+        }
     }
-
 }
