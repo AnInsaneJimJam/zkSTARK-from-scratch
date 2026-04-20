@@ -13,6 +13,7 @@ use sha3::{
 pub struct ProofStream<T> {
     objects: Vec<T>,
     read_index: usize,
+    prefix: Vec<u8>,
 }
 
 impl<T> Default for ProofStream<T> {
@@ -27,6 +28,16 @@ impl<T> ProofStream<T> {
         Self {
             objects: Vec::new(),
             read_index: 0,
+            prefix: Vec::new(),
+        }
+    }
+
+    /// Creates an empty proof stream with a Fiat-Shamir prefix.
+    pub fn with_prefix(prefix: Vec<u8>) -> Self {
+        Self {
+            objects: Vec::new(),
+            read_index: 0,
+            prefix,
         }
     }
 
@@ -43,6 +54,34 @@ impl<T> ProofStream<T> {
     /// Returns `true` when the transcript is empty.
     pub fn is_empty(&self) -> bool {
         self.objects.is_empty()
+    }
+
+    /// Constructs a proof stream from an existing object vector.
+    pub fn from_objects(objects: Vec<T>) -> Self {
+        Self {
+            objects,
+            read_index: 0,
+            prefix: Vec::new(),
+        }
+    }
+
+    /// Constructs a prefixed proof stream from an existing object vector.
+    pub fn from_objects_with_prefix(objects: Vec<T>, prefix: Vec<u8>) -> Self {
+        Self {
+            objects,
+            read_index: 0,
+            prefix,
+        }
+    }
+
+    /// Consumes the stream and returns its stored objects.
+    pub fn into_objects(self) -> Vec<T> {
+        self.objects
+    }
+
+    /// Returns the Fiat-Shamir prefix.
+    pub fn prefix(&self) -> &[u8] {
+        &self.prefix
     }
 }
 
@@ -78,19 +117,34 @@ where
             objects: bincode::deserialize(bytes)
                 .expect("proof stream deserialization should succeed"),
             read_index: 0,
+            prefix: Vec::new(),
+        }
+    }
+
+    /// Deserializes a transcript from bytes with a Fiat-Shamir prefix.
+    pub fn deserialize_with_prefix(bytes: &[u8], prefix: Vec<u8>) -> Self {
+        Self {
+            objects: bincode::deserialize(bytes)
+                .expect("proof stream deserialization should succeed"),
+            read_index: 0,
+            prefix,
         }
     }
 
     /// Fiat-Shamir transcript challenge for the prover.
     pub fn prover_fiat_shamir(&self, num_bytes: usize) -> Vec<u8> {
-        shake_256(&self.serialize(), num_bytes)
+        let mut input = self.prefix.clone();
+        input.extend(self.serialize());
+        shake_256(&input, num_bytes)
     }
 
     /// Fiat-Shamir transcript challenge for the verifier.
     pub fn verifier_fiat_shamir(&self, num_bytes: usize) -> Vec<u8> {
+        let mut input = self.prefix.clone();
         let prefix = bincode::serialize(&self.objects[..self.read_index])
             .expect("proof stream prefix serialization should succeed");
-        shake_256(&prefix, num_bytes)
+        input.extend(prefix);
+        shake_256(&input, num_bytes)
     }
 }
 

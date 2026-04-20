@@ -74,6 +74,11 @@ impl Fri {
             .collect()
     }
 
+    /// Returns the FRI evaluation domain length.
+    pub fn domain_length(&self) -> usize {
+        self.domain_length
+    }
+
     /// Produces a FRI proof for the supplied codeword.
     pub fn prove(
         &self,

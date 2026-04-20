@@ -99,18 +99,21 @@ impl FieldElement {
     /// assert_eq!(g.pow(1), g);
     /// ```
     pub fn pow(&self, exponent: u64) -> Self {
+        self.pow_biguint(&BigUint::from(exponent))
+    }
+
+    /// Modular exponentiation for wide exponents.
+    pub fn pow_biguint(&self, exponent: &BigUint) -> Self {
         let one = Self::new(BigUint::one(), self.field.clone());
-        if exponent == 0 {
+        if exponent.is_zero() {
             return one;
         }
 
         let mut acc = one;
         let val = Self::new(self.value.clone(), self.field.clone());
-        let bits = 64 - exponent.leading_zeros();
-
-        for i in (0..bits).rev() {
+        for i in (0..exponent.bits()).rev() {
             acc = acc.clone() * acc;
-            if (exponent >> i) & 1 == 1 {
+            if exponent.bit(i) {
                 acc = acc * val.clone();
             }
         }

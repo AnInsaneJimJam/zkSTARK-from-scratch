@@ -45,6 +45,11 @@ impl Field {
         FieldElement::new(BigUint::from(val), self.clone())
     }
 
+    /// Helper to construct a `FieldElement` from a decimal string.
+    pub fn element_from_str(self: &Arc<Self>, val: &str) -> FieldElement {
+        FieldElement::new(val.parse().expect("invalid field element literal"), self.clone())
+    }
+
     // ─── Constants ───────────────────────────────────────────────────────────
 
     /// Returns the additive identity `0`.

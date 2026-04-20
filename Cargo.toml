@@ -8,5 +8,6 @@ bincode = "1.3"
 blake2 = "0.10"
 num-bigint = { version = "0.4", features = ["serde"] }
 num-traits = "0.2"
+rand = "0.9"
 serde = { version = "1", features = ["derive", "rc"] }
 sha3 = "0.10"
