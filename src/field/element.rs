@@ -8,6 +8,7 @@ use std::sync::Arc;
 
 use num_bigint::BigUint;
 use num_traits::{One, Zero};
+use serde::{Deserialize, Serialize};
 
 use super::Field;
 
@@ -28,7 +29,7 @@ use super::Field;
 /// # Panics
 ///
 /// Division by zero panics at runtime.
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FieldElement {
     /// Residue in `[0, p)`.
     pub(crate) value: BigUint,

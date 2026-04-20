@@ -8,6 +8,7 @@ pub use element::FieldElement;
 use std::sync::Arc;
 use num_bigint::{BigUint, BigInt};
 use num_traits::{Zero, One};
+use serde::{Deserialize, Serialize};
 
 use crate::math::xgcd;
 
@@ -17,7 +18,7 @@ use crate::math::xgcd;
 ///
 /// Handles the core arithmetic operations (add, subtract, multiply, divide)
 /// modulo `p`. Acts as a factory for [`FieldElement`]s.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Field {
     /// The prime modulus `p`.
     pub p: BigUint,
